@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+	<meta name="robots" content="noindex">
+	<link type="text/css" rel="stylesheet" href="/css/stack/jquery-ui-1.10.3.custom.min.css" />
+    <link type="text/css" rel="stylesheet" href="/css/main.css" />	
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<script>
+		$( document ).ready(function() {
+			$('.tabs').tabs();
+		});
+	</script>
+	<title>{{ season.key.parent().get().name}} - {{ season.name}} - Standings</title>
+  </head>
+  <body>
+	<div id="header" class="ui-state-highlight ui-corner-all">
+		<a href="/">Home</a> > <a href="/{{ season.key.parent().get().name}}">{{ season.key.parent().get().name }}</a> > {{ season.name }}
+	</div>
+	<div class="clear"></div>
+	<div class="tabs" id="stand">
+		<ul>
+			<li><a href="#overall">overall</a></li>
+			<li><a href="#toc">TOC</a></li>
+		</ul>
+		<div id="overall">
+			<table>
+				<tr><th></th><th>Points</th></tr>
+				{% for item in overall %}
+					<tr><td>{{ item[0]}}</td><td>{{ item[1] }}</td></tr>
+				{% endfor %}
+			</table>
+		</div>
+		<div id="toc">
+			<table>
+				<tr><th colspan="4">winners</th></tr>
+				<tr><th></th><th>Points</th><th>Wins</th><th>Average</th></tr>
+				{% for splayer in winners %}
+					<tr><td>{{ splayer.name}}</td><td>{{ splayer.points }}</td><td>{{ splayer.wins}}</td><td>{{splayer.average }}</td></tr>
+				{% endfor %}
+				<tr><th colspan="4">Points</th></tr>
+				<tr><th></th><th>Points</th><th>Wins</th><th>Average</th></tr>
+				{% for splayer in points %}
+					<tr><td>{{ splayer.name}}</td><td>{{ splayer.points }}</td><td>{{ splayer.wins}}</td><td>{{splayer.average }}</td></tr>
+				{% endfor %}
+				<tr><th colspan="4">Average</th></tr>
+				<tr><th></th><th>Points</th><th>Wins</th><th>Average</th></tr>
+				{% for splayer in average %}
+					<tr><td>{{ splayer.name}}</td><td>{{ splayer.points }}</td><td>{{ splayer.wins}}</td><td>{{splayer.average }}</td></tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+  </body>
+</html>
+{% endautoescape %}

@@ -1,0 +1,87 @@
+#clock, #blinds, #p_base, #a_base, #newexist, #round, #l_setup, #stand{
+	float: left;
+}
+#stats{
+	float: right;
+}
+#stats{
+	text-align: center;
+}
+.clear{
+	clear: both;
+}
+#round td{
+	text-align:center;
+}
+.ui-accordion .ui-accordion-content
+{
+	padding: 0; 
+}
+label{
+	display: inline-block;
+	vertical-align: top;
+}
+#setup, #header{
+	min-width: 250px;
+	margin-left: 2px;
+}
+.accordion{
+	margin-left: 2px;
+}
+.accordion  div, .tabs ul, .intabs ul, .tabs div, #pause, #shuffle, #setup ul, #setup div{
+	font-size: 10px;
+}
+#time{
+	font-size: 40px;
+}
+#top{
+	margin: 2px;
+}
+#tabs-2 input[type=textbox], #tabs-3 input[type=textbox] {
+	width: 40px;
+}
+.spin{
+    width: 25px;
+}
+        body {
+            margin: auto;            /* you'll see why later */
+        }
+
+    /**
+     * rules below are just here to paint the boxes
+     */
+        #fix {
+			min-width: 335px;
+        }
+
+    /*********************
+    MQs
+    *********************/
+
+    /**
+     * 585
+     */
+    @media only screen and (min-width: 602px) and (max-width: 851px) {
+        #fix {
+			float: left;
+			width: 335px;
+        }
+		#right {
+			float: left;
+			width: 250px;
+		}
+    }
+
+    /**
+     * 830
+     */
+    @media only screen and (min-width: 852px) {
+        #fix {
+            width: 335px;
+			float: left;
+        }
+        #in, #out {
+            width: 250px;
+			float: left;
+        }
+    }

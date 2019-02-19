@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+    <link type="text/css" rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+
+	<form action="/NewLeague" method="post">
+		<label>League Name<br/>
+			<input name="name" type="textbox">
+		</label>
+		<input value="Add League" type="submit">
+	</form>
+	
+	{% for league in leagues %}
+		<div>
+			<a href="/{{ league.name }}">{{ league.name }}</a>
+		</div>
+	{% endfor %}
+	
+  </body>
+</html>
+{% endautoescape %}

@@ -1,0 +1,69 @@
+<div class="tabs">
+	<ul>
+		<li><a href="#tabs-1">Knock</a></li>
+		<li><a href="#tabs-2">Edit</a></li>
+		<li><a href="#tabs-3">Delete</a></li>
+	</ul>
+	<div id="tabs-1">
+		{% if tplayer.knock_order == 0 %}
+			<form action="/{{ league_name }}/{{ season_name}}/{{ tournament_name }}/Knock" method="post">
+				<input type="hidden" name="tplayer" value="{{ tplayer.key.urlsafe() }}">
+				<label>knocked out by<br>
+					<select name="knock_player">
+						<option></option>
+						{% for tplayer in tplayers %}
+							{% if tplayer.knock_order == 0 %}
+								<option value="{{tplayer.player_id}}">{{tplayer.name}}</option>
+							{% endif %}
+						{% endfor %}
+					</select>
+				</label>
+				<br><br>
+				<input class="close" type="submit" value="Knock">
+			</form>
+		{% else %}
+			<div>Knocked out by:  {{ tplayer.knock_player().name }}</div>
+			<form action="/{{ league_name }}/{{ season_name }}/{{ tournament_name }}/Unknock" method="post">
+				<input type="hidden" name="tplayer" value="{{ tplayer.key.urlsafe() }}">
+				<input class="close" type="submit" value="Unknock">
+			</form>
+		{% endif %}
+	</div>
+	<div id="tabs-2">
+		<form action="/{{ league_name }}/{{ season_name}}/{{ tournament_name }}/EditTplayer" method="post">
+			<input type="hidden" name="tplayer" value="{{ tplayer.key.urlsafe() }}">
+			<label>Buyin<br>
+				{{tournament.buyin}}
+			</label>
+			<label>Addons<br>
+				{% for addon in tournament.t_addons %}
+					<label><input name="addon" type="checkbox" {% if addon.name in tplayer.addons() %}checked{% endif %} value="{{ loop.index0 }}">{{ addon.name }} - {{ addon.cost }}</label><br>
+				{% endfor %}
+			</label>
+			<label>due<br>
+				{{tplayer.due()}}
+			</label>
+			<label>paid<br>
+				<input type="textbox" class="spin" name="paid" value="{{ tplayer.paid }}">
+			</label>			
+			<br>
+			<label>table<br>
+				<input type="textbox" class="spin" name="table" value="{{tplayer.table}}">
+			</label>
+			<label>seat<br>
+				<input type="textbox" class="spin" name="seat" value="{{tplayer.seat}}">
+			</label>
+			<label>&nbsp;<br>
+				<input type="submit" value="Save">
+			</label>
+		</form>
+	</div>
+	<div id="tabs-3">
+		<form action="/{{ league_name }}/{{ season_name}}/{{ tournament_name }}/DeleteTplayer" method="post">
+			<input type="hidden" name="tplayer" value="{{ tplayer.key.urlsafe() }}">
+			<a href="#" class="close" onclick="$(this).parent().submit();">Delete</a>
+		</form>
+	</div>
+</div>
+
+

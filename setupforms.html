@@ -1,0 +1,166 @@
+<ul>
+	<li><a href="#tabs-1">Signin</a></li>
+	<li><a href="#tabs-2">Expense</a></li>
+	<li><a href="#tabs-3">Addon</a></li>
+	<li><a href="#tabs-4">Payout</a></li>
+	<li><a href="#tabs-5">Balance</a></li>
+</ul>
+<div id="tabs-1">
+	<form id="AddTplayer" action="/{{ league_name }}/{{ season_name }}/{{ tournament_name }}/AddTplayer" method="post">
+		<input type="hidden" name="tournament" value="{{tournament.key.urlsafe()}}">
+		<div id="newexist">
+			<label>Existing Player<br>
+				<input id="exist" class="create" type="radio" name="create" value="exist" checked>
+				<select id="player" class="create_input update" name="player">
+					<option></option>
+					{% for player in players %}
+						{% if player.key.integer_id() not in tplayer_ids %}
+							<option value="{{player.key.urlsafe()}}">{{player.name}}</option>
+						{% endif %}
+					{% endfor %}
+				</select>
+			</label>
+			<br>
+			<label>New Player<br>
+				<input id="new" class="create" type="radio" name="create" value="new">
+				<input id="newplayer" class="create_input update" type="textbox" name="newplayer">
+			</label>
+		</div>
+		<label>Buyin<br>
+			{{ tournament.buyin }}
+		</label>
+		<label>Addons<br>
+			{% for addon in tournament.t_addons %}
+				<label><input name="addon" data-cost="{{ addon.cost}}" class="update" type="checkbox" {% if addon.checked %}checked{% endif %} value="{{ loop.index0 }}"> {{ addon.name }} - {{ addon.cost }}</label><br>
+			{% endfor %}
+		</label>
+		<div class="clear"></div>
+		<label>Due<br>
+			<label id="due"></label>
+		</label>
+		<label>Paid<br>
+			<input class="spin" type="textbox" name="paid"><br>
+		</label>
+		<label>&nbsp;<br>
+			<input class="close" type="submit" value="Signin">
+		</label>
+	</form>
+</div>
+<div id="tabs-2">
+	<table>
+		<tr>
+			<th>name</th>
+			<th>amount</th>
+		</tr>
+		{% for expense in tournament.t_expenses %}
+			<tr>
+				<td>{{ expense.name }}</td>
+				<td>{{ expense.amount }}</td>
+				<td>
+					{% if not expense.cleared %}
+						<form action="/{{ league_name }}/{{season_name}}/{{ tournament_name }}/ClearExpense" method="post">
+							<input type="hidden" name="expense" value="{{ expense.name }}">
+							<input type="hidden" name="tournament" value="{{tournament.key.urlsafe()}}">
+							<input type="submit" value="clear">
+						</form>
+					{% endif %}
+				</td>
+				<td>
+					<form action="/{{ league_name }}/{{season_name}}/{{ tournament_name }}/DeleteExpense" method="post">
+						<input type="hidden" name="expense" value="{{ expense.name }}">
+						<input type="hidden" name="tournament" value="{{tournament.key.urlsafe()}}">
+						<a href="#" onclick="$(this).parent().submit();">Delete</a>
+					</form>
+				</td>
+			<tr>
+		{% endfor %}
+		<tr>
+			<td>
+				<form id="ExpenseForm" action="/{{ league_name }}/{{season_name}}/{{ tournament_name }}/Expense" method="post">
+					<input type="textbox" name="name">
+					</td><td>
+					<input type="textbox" name="amount">
+					</td><td>
+					<input type="hidden" name="tournament" value="{{tournament.key.urlsafe()}}">
+					<input type="Submit" value="Add">
+				</form>
+			</td>
+		</tr>
+	</table>
+</div>
+<div id="tabs-3">
+	<table>
+		<tr>
+			<th>name</th>
+			<th>cost</th>
+			<th>count</th>
+			<th>total</th>
+		</tr>
+		{% for addon in tournament.t_addons %}
+			<tr>
+				<td>{{ addon.name }}</td>
+				<td>{{ addon.cost }}</td>
+				<td>{{ addon.count }}</td>
+				<td>{{ addon.count * addon.cost}}</td>
+				<td>
+					<form action="/{{ league_name }}/{{season_name}}/{{ tournament_name }}/DeleteAddon" method="post">
+						<input type="hidden" name="addon" value="{{ addon.name }}">
+						<input type="hidden" name="tournament" value="{{tournament.key.urlsafe()}}">
+						<a href="#" onclick="$(this).parent().submit();">Delete</a>
+					</form>
+				</td>
+			</tr>
+		{% endfor %}
+		<tr>
+			<td>
+				<form id="AddonForm" action="/{{ league_name }}/{{season_name}}/{{ tournament_name }}/Addon" method="post">
+					<input type="textbox" name="name">
+			</td>
+			<td>
+					<input type="textbox" name="cost">
+			</td>
+			<td>
+					<input type="checkbox" name="checked" value="True">
+			</td>
+			<td>
+					<input type="hidden" name="tournament" value="{{tournament.key.urlsafe()}}">
+					<input type="Submit" value="Add">
+				</form>
+			</td>
+		</tr>
+	</table>
+</div>
+<div id="tabs-4">
+	<div id="payout">
+		<table>
+			<tr>
+				<th>Place</th>
+				<th>Rate</th>
+				<th>Payout</th>
+			</tr>
+			{% for payout in payouts %}
+				<tr>
+					<td>{{ payout.place }}</td>
+					<td>{{ payout.rate }}</td>
+					<td>{{ payout_basis * payout.rate / 100 }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+<div id="tabs-5">
+	<table id="p_base">
+		<tr><th colspan="2">Payout</th></tr>
+		<tr><td>Buyin Total:</td><td>{{buyin_tot}}</td></tr>
+		<tr><td>Addon Total:</td><td>{{addon_tot}}</td></tr>
+		<tr><td>Expense Total:</td><td>{{expense_tot}}</td></tr>
+		<tr><td>Payout Basis:</td><td>{{payout_basis}}</td></tr>
+	</table>
+	<table id="a_base">
+		<tr><th colspan="2">Actual</th></tr>
+		<tr><td>Amount in:</td><td>{{amount_in}}</td></tr>
+		<tr><td>Amount out:</td><td>{{amount_out}}</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td>Actual Balance:</td><td>{{amount_in - amount_out}}</td></tr>
+	</table>
+</div>

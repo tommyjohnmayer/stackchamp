@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+	<meta name="robots" content="noindex">
+    <link type="text/css" rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+		<h1>Admin</h1>
+		<form action="/admin/blind/{{ blind_id }}/NewBlindRound" method="post">
+			<input name="round" type="textbox">
+			<input name="small" type="textbox">
+			<input name="big" type="textbox">
+			<input name="ante" type="textbox">
+			<input value="Add Blind" type="submit">
+		</form>
+		{% for round in details %}
+			<div>
+				{{ round.round }} - {{ round.small }} - {{ round.big }} - {{ round.ante }}
+			</div>
+		{% endfor %}
+		
+		<a href="{{ url|safe }}">{{ url_linktext }}</a>
+  </body>
+</html>
+{% endautoescape %}

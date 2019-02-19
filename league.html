@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+	<meta name="robots" content="noindex">
+	<link type="text/css" rel="stylesheet" href="/css/stack/jquery-ui-1.10.3.custom.min.css" />
+    <link type="text/css" rel="stylesheet" href="/css/main.css" />	
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<script>
+		$( document ).ready(function() {
+			$('.season').accordion({
+				collapsible: true,
+				active: false
+			});		
+			$('.tabs').tabs();
+			$('.date').datepicker();
+		});
+	</script>
+	<title>{{league.name}}</title>
+  </head>
+  <body>
+	<div id="header" class="ui-state-highlight ui-corner-all">
+		<a href="/">Home</a> > {{ league.name }}
+	</div>
+	<div class="clear"></div>
+	<div class="tabs" id="l_setup">
+		<ul>
+			{% for season in seasons %}
+				<li><a href="#{{season.key.urlsafe()}}">{{ season.name }}</a></li>
+			{% endfor %}
+			<li><a href="#newseason">new</a></li>
+		</ul>
+		{% for season in seasons %}
+			<div id="{{season.key.urlsafe()}}">
+				<a href="/{{ league.name }}/{{ season.name }}">standings</a>
+				<div class="season">
+					{% for tournament in season.tournaments() %}
+						<div>{{ tournament.name }}</div>
+						<div>
+							<a href="/{{ league.name }}/{{ season.name }}/{{ tournament.name }}">View {{ tournament.name }}</a><br>
+							buyin:  {{ tournament.buyin }}<br>
+							chip stack:  {{ tournament.chips }}<br>
+							players:  {{ tournament.play_count }}<br>
+							payout:  {{ tournament.payout_schedule.name }}<br>
+							blinds:  {{ tournament.blind_schedule.name }}<br>
+							round length:  {{ tournament.round_length }}<br>
+							multiplier:  {{ tournament.multiplier }}<br>
+						</div>
+					{% endfor %}
+					<div>new</div>
+					<div>
+						<form action="/{{ league.name }}/NewTournament" method="post">
+							<label>Name<br>
+								<input type="textbox" name="name">
+							</label>
+							<label>Date<br>
+								<input class="date" type="textbox" name="date">
+							</label>
+							<input type="hidden" name="season" value="{{season.key.urlsafe()}}">
+							<label>Buyin<br>
+								<input type="textbox" name="buyin">
+							</label>
+							<label>Chip Stack<br>
+								<input type="textbox" name="chips">
+							</label>
+							<br>
+							<label>Payout<br>
+								<select name="payout_schedule">
+									<option></option>
+									{% for payout in payouts %}
+										<option value="{{payout.key.integer_id()}}">{{payout.name}}</option>
+									{% endfor %}
+								</select>
+							</label>
+							<label>Blind<br>
+								<select name="blind_schedule">
+									<option></option>
+									{% for blind in blinds %}
+										<option value="{{blind.key.integer_id()}}">{{blind.name}}</option>
+									{% endfor %}
+								</select>
+							</label>
+							<label>Round Length<br>
+								<input type="textbox" name="length">
+							</label>
+							<br>
+							<label>Multiplier<br>
+								<input type="textbox" name="multiplier">
+							</label>
+							<input type="submit" value="Add">
+						</form>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+		<div id="newseason">
+			<form action="/{{ league.name }}/NewSeason" method="post">
+				<input type="hidden" name="league" value="{{league.key.urlsafe()}}">
+				<label>Name<br>
+					<input type="textbox" name="name">
+				</label>
+				<input type="submit" value="Add">
+			</form>
+		</div>
+	</div>
+  </body>
+</html>
+{% endautoescape %}

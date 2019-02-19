@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+	<meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" rel="stylesheet" href="/css/stack/jquery-ui-1.10.3.custom.min.css" />
+    <link type="text/css" rel="stylesheet" href="/css/main.css" />	
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<script>
+		function setCookie(name, value, days) {
+			if (days) {
+				var date = new Date();
+				date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+				var expires = "; expires=" + date.toGMTString();
+			}
+			else var expires = "";
+			document.cookie = name + "=" + value + expires + "; path=/";
+		}
+		function getCookie(c_name) {
+			if (document.cookie.length > 0) {
+				c_start = document.cookie.indexOf(c_name + "=");
+				if (c_start != -1) {
+					c_start = c_start + c_name.length + 1;
+					c_end = document.cookie.indexOf(";", c_start);
+					if (c_end == -1) {
+						c_end = document.cookie.length;
+					}
+					return unescape(document.cookie.substring(c_start, c_end));
+				}
+			}
+			return false;
+		}
+		function checkUpdate(){
+			$.get('/{{ league_name }}/{{season_name}}/{{ tournament_name }}/CheckUpdate', function(data) {
+				if( data != '{{ tournament.last_update }}'){
+					location.reload();
+				}
+			});
+		}
+		function setDteView(secs){
+			var d = new Date();
+			d.setTime(secs * 1000);
+			var s = d.getSeconds();
+			if (secs == 0){
+				location.reload();
+				clearInterval(looping_id);
+			}
+			if (s == 30){
+				$('#time').html(d.getMinutes() + ":" + d.getSeconds());
+				checkUpdate();
+			}
+			else if (s <= 9){
+				$('#time').html(d.getMinutes() + ":0" + d.getSeconds());
+			}
+			else {
+				$('#time').html(d.getMinutes() + ":" + d.getSeconds());
+			}
+		}
+		var time;
+		var looping_id;
+		function runClock(){
+			time = time - 1;
+			setDteView(time);
+		}
+		$( document ).ready(function() {
+			var status = $('#pause').html();
+			var option;
+			var icon;
+			time = parseInt($('#time').html());
+			setDteView(time)
+			if( status == 'populating'){
+				option = 'begin';
+				icon = 'ui-icon-play';
+			}else if( status == 'running' ){
+				option = 'pause';
+				icon = 'ui-icon-pause';
+			}else if( status == 'paused' ){
+				option = 'continue';
+				icon = 'ui-icon-play';
+			}else if( status == 'finished'){
+				option = '';
+				icon = '';
+			}
+			$('#pause').button({
+				label: option,
+				icons: {
+				primary: icon
+				},
+			}).click(function(){
+				if( status == 'running'){
+					clearInterval(looping_id);
+				}else if( status == 'paused'){
+					looping_id = setInterval("runClock()", 1000 );
+				}
+			});
+			if( status == 'running'){
+				looping_id = setInterval("runClock()", 1000 );
+			}
+			$(':submit').button();
+			$('#shuffle').button({
+				icons: {
+				primary: "ui-icon-shuffle"
+				},
+			});
+			$('.update').change(function(){
+				var a = {{ tournament.buyin}};
+				$("#AddTplayer input[type=checkbox]").each(function() {
+					if( $(this).is(':checked')){
+						a += parseInt($(this).attr('data-cost'));
+					}
+				});
+				$('#AddTplayer input[name=paid]').val(a);
+				$('#due').html(a);
+			});
+			$('#player').change(function(){
+				$('#exist').prop('checked', true);
+			});
+			$('#newplayer').change(function(){
+				$('#new').prop('checked', true);
+			});
+			$('.spin').spinner();
+			var setup = getCookie("setup");
+			$('#setup').tabs({
+				heightStyle: "auto",
+				collapsible: true,
+				active: setup,
+				activate: function( event, ui ) {
+					var c = ui.newTab.index();
+					if(ui.newTab.length == 0){
+						c = false;
+					}
+					setCookie("setup",c,1);
+				}
+			});
+			$('.tabs').tabs({
+				heightStyle: "auto"
+			});
+			$('.accordion').accordion({
+				collapsible: true,
+				active: false,
+			});
+		});
+	</script>
+	<title>{{ league_name }} - {{ season_name }} - {{ tournament.name }}</title>
+  </head>
+  <body>
+	<div id="fix">
+		<div id="header" class="ui-state-highlight ui-corner-all">
+			<a href="/">Home</a> > <a href="/{{ league_name }}">{{ league_name }}</a> > {{ tournament.name }}
+		</div>
+		<div id="top" class="ui-widget-content ui-corner-all">
+			<div id="clock">	
+				<div id="time">{{tournament.rem_time()}}</div>
+				<div id="controls">
+					<a id="pause" href="/{{ league_name }}/{{season_name}}/{{ tournament_name }}/Pause">{{ tournament.status }}</a>
+					<br>
+					<a id="shuffle" href="/{{ league_name }}/{{season_name}}/{{ tournament_name }}/Shuffle">shuffle</a>
+				</div>
+			</div>
+			<div id="blinds">
+				<div id="round">
+					<table>
+						<tr>
+							<td>round</td>
+							<td>small</td>
+							<td>big</td>
+							<td>ante</td>
+						</tr>
+							{% for round in blinds %}
+								<tr>
+									<td>{{ round.round }}</td>
+									<td>{{ round.small }}</td>
+									<td>{{ round.big }}</td>
+									<td>{{ round.ante }}</td>
+								</tr>
+							{% endfor %}
+					</table>
+					<div class="ui-corner-all ui-state-highlight">ave:  {{ ave_chips}} tot:  {{ tot_chips }}</div>
+				</div>
+			</div>
+			<div id="stats">
+				<div class="ui-corner-all ui-state-active">
+					players<br>
+					{{ tournament.in_count }} / {{ tournament.play_count }}
+				</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div id="setup">
+			{% include 'setupforms.html' %}
+		</div>
+		<div class="clear"></div>
+	</div>
+	<div id="right">
+		<div id="in" class="accordion">
+			{% for i in range(1, tournament.tables() +2) %}
+				{% for tplayer in tplayers %}
+					{% if tplayer.knock_order == 0 and tplayer.table == i %}
+						<div class="player">{{ tplayer.table }} - {{ tplayer.seat }} {{tplayer.name}}{% if tplayer.balance_calc() != 0 %} Balance: {{tplayer.balance_calc()}}{% endif %}</div>
+						<div>
+							{% include 'tplayerforms.html' %}
+						</div>
+					{% endif %}
+				{% endfor %}
+			{% endfor %}
+		</div>
+		<div id="out" class="accordion">
+			{% for tplayer in tplayers %}
+				{% if tplayer.knock_order > 0 %}
+					<div class="ui-state-error player">{{ tplayer.place }} - {{ tplayer.points }} {{tplayer.name}}{% if tplayer.balance_calc() != 0 %} Balance: {{tplayer.balance_calc()}}{% endif %}</div>
+					<div>
+						{% include 'tplayerforms.html' %}
+					</div>
+				{% endif %}
+			{% endfor %}
+		</div>
+	</div>
+	<div class="clear"></div>
+  </body>
+</html>
+{% endautoescape %}

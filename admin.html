@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+	<meta name="robots" content="noindex">
+    <link type="text/css" rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+		<h1>Admin</h1>
+		Payouts		
+		<form action="/NewPayout" method="post">
+			<input name="name" type="textbox">
+			<input value="Add Payout" type="submit">
+		</form>
+		{% for payout in payouts %}
+			<div>
+				<a href="/admin/payout/{{ payout.key.integer_id() }}">{{ payout.name }}</a>
+			</div>
+		{% endfor %}
+		Blinds
+		<form action="/NewBlind" method="post">
+			<input name="name" type="textbox">
+			<input value="Add Blind" type="submit">
+		</form>
+		{% for blind in blinds %}
+			<div>
+				<a href="/admin/blind/{{ blind.key.integer_id() }}">{{ blind.name }}</a>
+			</div>
+		{% endfor %}
+		<a href="{{ url|safe }}">{{ url_linktext }}</a>
+  </body>
+</html>
+{% endautoescape %}

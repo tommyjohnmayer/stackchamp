@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+	<meta name="robots" content="noindex">
+    <link type="text/css" rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+		<h1>Admin</h1>
+		<form action="/admin/payout/{{ payout_id }}/NewPayoutDetail" method="post">
+			<input name="num_paid" type="textbox">
+			<input name="place" type="textbox">
+			<input name="rate" type="textbox">
+			<input value="Add Payout" type="submit">
+		</form>
+		{% for payout_detail in details %}
+			<div>
+				{{ payout_detail.num_paid }} - {{ payout_detail.place }} - {{ payout_detail.rate }}
+			</div>
+		{% endfor %}
+		
+		<a href="{{ url|safe }}">{{ url_linktext }}</a>
+  </body>
+</html>
+{% endautoescape %}
