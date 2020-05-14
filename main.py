@@ -117,18 +117,20 @@ class Tournament(ndb.Model):
 		ft = 0
 		tot_players = self.play_count	
 		paid = 1
-		if tot_players > 1:
+		if tot_players > 5:
 			paid = 2
-		if tot_players > 3:
+		if tot_players > 9:
 			paid = 3
-		if tot_players > 12:
+		if tot_players > 18:
 			paid = 4
-		if tot_players > 20:
-			paid = 5
 		if tot_players > 27:
+			paid = 5
+		if tot_players > 36:
 			paid = 6
-		if tot_players > 35:
+		if tot_players > 45:
 			paid = 7
+		if tot_players > 54:
+			paid = 8
 		if place <= paid:
 			ITMBonusPool = paid * 200
 			PayoutRate = Payout_Detail.query(Payout_Detail.payout_schedule == self.payout_schedule, Payout_Detail.num_paid == paid, Payout_Detail.place == place).fetch()
@@ -328,18 +330,20 @@ class ViewTournament(webapp2.RequestHandler):
 		tot_players = tournament.play_count
 		tot_chips = tot_players * tournament.chips
 		paid = 1
-		if tot_players > 1:
+		if tot_players > 5:
 			paid = 2
-		if tot_players > 3:
+		if tot_players > 9:
 			paid = 3
-		if tot_players > 12:
+		if tot_players > 18:
 			paid = 4
-		if tot_players > 20:
-			paid = 5
 		if tot_players > 27:
+			paid = 5
+		if tot_players > 36:
 			paid = 6
-		if tot_players > 35:
+		if tot_players > 45:
 			paid = 7
+		if tot_players > 54:
+			paid = 8
 		payouts = Payout_Detail.query(Payout_Detail.payout_schedule == tournament.payout_schedule, Payout_Detail.num_paid == paid).order(Payout_Detail.place)
 		blinds = Blind_Round.query(Blind_Round.blind_schedule == tournament.blind_schedule, Blind_Round.round >= tournament.round).order(Blind_Round.round).fetch(2)
 		if tournament.in_count:
@@ -456,18 +460,20 @@ class Knock(webapp2.RequestHandler):
 		ft = 0
 		tot_players = tournament.play_count
 		paid = 1
-		if tot_players > 1:
+		if tot_players > 5:
 			paid = 2
-		if tot_players > 3:
+		if tot_players > 9:
 			paid = 3
-		if tot_players > 12:
+		if tot_players > 18:
 			paid = 4
-		if tot_players > 20:
-			paid = 5
 		if tot_players > 27:
+			paid = 5
+		if tot_players > 36:
 			paid = 6
-		if tot_players > 35:
+		if tot_players > 45:
 			paid = 7
+		if tot_players > 54:
+			paid = 8
 		if place <= paid:
 			ITMBonusPool = paid * 200
 			PayoutRate = Payout_Detail.query(Payout_Detail.payout_schedule == tournament.payout_schedule, Payout_Detail.num_paid == paid, Payout_Detail.place == place).fetch()
